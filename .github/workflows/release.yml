@@ -1,0 +1,36 @@
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Release branch"
+        default: "master"
+
+env:
+  dockerHubUsername: ${{ secrets.dockerHubUsername }}
+  dockerHubPassword: ${{ secrets.dockerHubPassword }}
+  dockerRegistry: ${{ secrets.dockerRegistry }}
+  dockerRegistryUsername: ${{ secrets.dockerRegistryUsername }}
+  dockerRegistryPassword: ${{ secrets.dockerRegistryPassword }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    name: Maven Release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Maven Release Step
+        uses: ./ # Uses an action in the root directory
+        with:
+          releaseBranchName: "${{ github.event.inputs.branch }}"
+
+          gitUserName: "bastilleo"
+          gitUserEmail: "bastilleo@vanzyl.ca"
+
+          mavenReleaseServerId: "${{secrets.MAVEN_RELEASE_SERVER_ID}}"
+          mavenReleaseServerUsername: "${{secrets.MAVEN_RELEASE_SERVER_USERNAME}}"
+          mavenReleaseServerPassword: "${{secrets.MAVEN_RELEASE_SERVER_PASSWORD}}"
+          mavenReleaseArguments: "-Pdocker"
+          mavenReleaseExecutePerform: "true"
+          mavenReleasePushCommits: "true"
+          mavenReleaseExecutePostScripts: "true"

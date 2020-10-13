@@ -1,0 +1,67 @@
+name: "Maven Release Action"
+description: "Perform a Maven release"
+inputs:
+  releaseBranchName:
+    description: "Release branch"
+    required: false
+
+  gitUserName:
+    description: 'GitHub user name'
+    required: true
+  gitUserEmail:
+    description: 'GitHub user email'
+    required: true
+
+  mavenReleaseSettingsXml:
+    description: "Maven settings.xml to use for the release"
+    required: false
+    default: "settings.xml"
+  mavenReleaseServerId:
+    description: "Server id of the release repository"
+    required: true
+  mavenReleaseServerUsername:
+    description: "Username required to access the release repository"
+    required: true
+  mavenReleaseServerPassword:
+    description: "Password required to access the release repository"
+    required: true
+  mavenReleaseArguments:  # id of input
+    description: 'Arguments for Maven release'
+  mavenReleaseExecutePerform:
+    description: 'Execute maven release:perform'
+    required: false
+    default: "true"
+  mavenReleasePushCommits:
+    description: "After a successful release:perform push release commits"
+    required: false
+    default: "true"
+  mavenReleaseExecutePostScripts:
+    description: "After a successful release:perform execute post scripts"
+    required: false
+    default: "true"
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  env:
+    RELEASE_BRANCH_NAME: ${{ inputs.releaseBranchName }}
+
+    #GPG_ENABLED: ${{ inputs.gpg-enabled }}
+    #GPG_KEY_ID: ${{ inputs.gpg-key-id }}
+    #GPG_KEY: ${{ inputs.gpg-key }}
+
+    MAVEN_RELEASE_SETTINGS_XML: ${{ inputs.mavenReleaseSettingsXml }}
+    MAVEN_RELEASE_SERVER_ID: ${{ inputs.mavenReleaseServerId }}
+    MAVEN_RELEASE_SERVER_USERNAME: ${{ inputs.mavenReleaseServerUsername }}
+    MAVEN_RELEASE_SERVER_PASSWORD: ${{ inputs.mavenReleaseServerPassword }}
+    MAVEN_RELEASE_ARGUMENTS: ${{ inputs.mavenReleaseArguments }}
+    MAVEN_RELEASE_EXECUTE_PERFORM: ${{ inputs.mavenReleaseExecutePerform }}
+    MAVEN_RELEASE_PUSH_COMMITS: ${{ inputs.mavenReleasePushCommits }}
+    MAVEN_RELEASE_EXECUTE_POST_SCRIPTS: ${{ inputs.mavenReleaseExecutePostScripts }}
+
+    GIT_USER_NAME: ${{ inputs.gitUserName }}
+    GIT_USER_EMAIL: ${{ inputs.gitUserEmail }}
+
+    #GITHUB_ACCESS_TOKEN: ${{ inputs.access-token }}
+  args:
+    - ${{ inputs.mavenArgs }}

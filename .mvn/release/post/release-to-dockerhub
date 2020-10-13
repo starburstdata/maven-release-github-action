@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+# ------------------------------------------------------------------------------
+# Take the images from our internal docker registry, retag them and
+# publish them to our public docker hub account
+# ------------------------------------------------------------------------------
+
+[[ ! -z $1 ]] && releaseVersion="$1" || { echo "You must specify a release version!"; exit; }
+
+if [[ ${version} == *-e ]]
+then
+  releaseType="sts"
+else
+  releaseType="lts"
+fi
+
+a=${dockerHubUsername}
+b=${dockerHubPassword}
+c=${dockerRegistry}
+d=${dockerRegistryUsername}
+e=${dockerRegistryPassword}
+
+echo "     dockerHubUsername: ${a}"
+echo "     dockerHubPassword: ${b}"
+echo "        dockerRegistry: ${c}"
+echo "dockerRegistryUsername: ${d}"
+echo "dockerRegistryPassword: ${e}"
