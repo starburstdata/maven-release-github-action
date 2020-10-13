@@ -2,7 +2,7 @@
 
 ## Assumptions (currently)
 
-Your project uses the Maven Wrapper. The Maven Release GitHub Action runs in a docker container and we want to ensure that the Maven release is performed with the same version your project builds with. The Maven Wrapper is the easiest way to achieve this.
+Your project uses the Maven Wrapper. We want to ensure that the Maven release is performed with the same version your project builds with. The Maven Wrapper is the easiest way to achieve this.
 
 Your project use a GitHub service account user to perform the releases. You will be required to provde the username and and email of the service account user to that the docker container used to setup the release can make the release commits with the proper identity.
 
@@ -77,6 +77,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 11           
       - name: Maven Release Step
         uses: starburstdata/mrel@1.0.0
         with:

@@ -7,7 +7,7 @@
 
 set -euo pipefail
 
-source /maven.bash
+source ./maven.bash
 
 export RELEASE_POST_SCRIPTS=".mvn/release/post"
 

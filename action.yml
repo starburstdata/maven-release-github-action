@@ -51,30 +51,27 @@ inputs:
     default: "true"
 
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
-  env:
-    RELEASE_BRANCH_NAME: ${{ inputs.releaseBranchName }}
+  using: 'composite'
+  steps:
+    - run: ./entrypoint.sh
+      shell: bash
+      env:
+        RELEASE_BRANCH_NAME: ${{ inputs.releaseBranchName }}
 
-    #GPG_ENABLED: ${{ inputs.gpg-enabled }}
-    #GPG_KEY_ID: ${{ inputs.gpg-key-id }}
-    #GPG_KEY: ${{ inputs.gpg-key }}
+        #GPG_ENABLED: ${{ inputs.gpg-enabled }}
+        #GPG_KEY_ID: ${{ inputs.gpg-key-id }}
+        #GPG_KEY: ${{ inputs.gpg-key }}
 
-    MAVEN_RELEASE_SETTINGS_XML: ${{ inputs.mavenReleaseSettingsXml }}
-    MAVEN_RELEASE_SERVER_ID: ${{ inputs.mavenReleaseServerId }}
-    MAVEN_RELEASE_SERVER_USERNAME: ${{ inputs.mavenReleaseServerUsername }}
-    MAVEN_RELEASE_SERVER_PASSWORD: ${{ inputs.mavenReleaseServerPassword }}
-    MAVEN_SNAPSHOT_SERVER_ID: ${{ inputs.mavenSnapshotServerId }}
-    MAVEN_SNAPSHOT_SERVER_USERNAME: ${{ inputs.mavenSnapshotServerUsername }}
-    MAVEN_SNAPSHOT_SERVER_PASSWORD: ${{ inputs.mavenSnapshotServerPassword }}
-    MAVEN_RELEASE_ARGUMENTS: ${{ inputs.mavenReleaseArguments }}
-    MAVEN_RELEASE_EXECUTE_PERFORM: ${{ inputs.mavenReleaseExecutePerform }}
-    MAVEN_RELEASE_PUSH_COMMITS: ${{ inputs.mavenReleasePushCommits }}
-    MAVEN_RELEASE_EXECUTE_POST_SCRIPTS: ${{ inputs.mavenReleaseExecutePostScripts }}
+        MAVEN_RELEASE_SETTINGS_XML: ${{ inputs.mavenReleaseSettingsXml }}
+        MAVEN_RELEASE_SERVER_ID: ${{ inputs.mavenReleaseServerId }}
+        MAVEN_RELEASE_SERVER_USERNAME: ${{ inputs.mavenReleaseServerUsername }}
+        MAVEN_RELEASE_SERVER_PASSWORD: ${{ inputs.mavenReleaseServerPassword }}
+        MAVEN_RELEASE_ARGUMENTS: ${{ inputs.mavenReleaseArguments }}
+        MAVEN_RELEASE_EXECUTE_PERFORM: ${{ inputs.mavenReleaseExecutePerform }}
+        MAVEN_RELEASE_PUSH_COMMITS: ${{ inputs.mavenReleasePushCommits }}
+        MAVEN_RELEASE_EXECUTE_POST_SCRIPTS: ${{ inputs.mavenReleaseExecutePostScripts }}
 
-    GIT_USER_NAME: ${{ inputs.gitUserName }}
-    GIT_USER_EMAIL: ${{ inputs.gitUserEmail }}
+        GIT_USER_NAME: ${{ inputs.gitUserName }}
+        GIT_USER_EMAIL: ${{ inputs.gitUserEmail }}
 
-    #GITHUB_ACCESS_TOKEN: ${{ inputs.access-token }}
-  args:
-    - ${{ inputs.mavenArgs }}
+        #GITHUB_ACCESS_TOKEN: ${{ inputs.access-token }}
