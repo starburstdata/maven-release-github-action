@@ -4,14 +4,12 @@ inputs:
   releaseBranchName:
     description: "Release branch"
     required: false
-
   gitUserName:
     description: 'GitHub user name'
     required: true
   gitUserEmail:
     description: 'GitHub user email'
     required: true
-
   mavenReleaseSettingsXml:
     description: "Maven settings.xml to use for the release"
     required: false
@@ -49,32 +47,73 @@ inputs:
     description: "After a successful release:perform execute post scripts"
     required: false
     default: "true"
+  mavenPostScripts:
+    description: "Post scripts location"
+    required: false
+    default: ".mvn/release/post"
+
+outputs:
+  prepared:
+    description: "Release was prepared"
+    value: ${{ steps.prepare.outputs.executed }}
+  performed:
+    description: "Release was performed"
+    value: ${{ steps.perform.outputs.executed }}
+  pushed:
+    description: "Commits and tags were pushed"
+    value: ${{ steps.push.outputs.executed }}
+  post:
+    description: "Post actions were run"
+    value: ${{ steps.post.outputs.executed }}
+  version:
+    description: "Released version"
+    value: ${{ steps.version.outputs.version }}
 
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
-  env:
-    RELEASE_BRANCH_NAME: ${{ inputs.releaseBranchName }}
-
-    #GPG_ENABLED: ${{ inputs.gpg-enabled }}
-    #GPG_KEY_ID: ${{ inputs.gpg-key-id }}
-    #GPG_KEY: ${{ inputs.gpg-key }}
-
-    MAVEN_RELEASE_SETTINGS_XML: ${{ inputs.mavenReleaseSettingsXml }}
-    MAVEN_RELEASE_SERVER_ID: ${{ inputs.mavenReleaseServerId }}
-    MAVEN_RELEASE_SERVER_USERNAME: ${{ inputs.mavenReleaseServerUsername }}
-    MAVEN_RELEASE_SERVER_PASSWORD: ${{ inputs.mavenReleaseServerPassword }}
-    MAVEN_SNAPSHOT_SERVER_ID: ${{ inputs.mavenSnapshotServerId }}
-    MAVEN_SNAPSHOT_SERVER_USERNAME: ${{ inputs.mavenSnapshotServerUsername }}
-    MAVEN_SNAPSHOT_SERVER_PASSWORD: ${{ inputs.mavenSnapshotServerPassword }}
-    MAVEN_RELEASE_ARGUMENTS: ${{ inputs.mavenReleaseArguments }}
-    MAVEN_RELEASE_EXECUTE_PERFORM: ${{ inputs.mavenReleaseExecutePerform }}
-    MAVEN_RELEASE_PUSH_COMMITS: ${{ inputs.mavenReleasePushCommits }}
-    MAVEN_RELEASE_EXECUTE_POST_SCRIPTS: ${{ inputs.mavenReleaseExecutePostScripts }}
-
-    GIT_USER_NAME: ${{ inputs.gitUserName }}
-    GIT_USER_EMAIL: ${{ inputs.gitUserEmail }}
-
-    #GITHUB_ACCESS_TOKEN: ${{ inputs.access-token }}
-  args:
-    - ${{ inputs.mavenArgs }}
+  using: "composite"
+  steps:
+    - name: Set environment variables
+      shell: bash
+      run: |
+        echo RELEASE_POST_SCRIPTS="${GITHUB_WORKSPACE}/${{ inputs.mavenPostScripts }}" >> $GITHUB_ENV
+        echo MAVEN_BIN="${GITHUB_WORKSPACE}/mvnw" >> $GITHUB_ENV
+        echo RELEASE_BRANCH_NAME="${{ inputs.releaseBranchName }}" >> $GITHUB_ENV
+        echo MAVEN_RELEASE_SETTINGS_XML="${{ inputs.mavenReleaseSettingsXml }}" >> $GITHUB_ENV
+        echo MAVEN_RELEASE_SERVER_ID="${{ inputs.mavenReleaseServerId }}" >> $GITHUB_ENV
+        echo MAVEN_RELEASE_SERVER_USERNAME="${{ inputs.mavenReleaseServerUsername }}" >> $GITHUB_ENV
+        echo MAVEN_RELEASE_SERVER_PASSWORD="${{ inputs.mavenReleaseServerPassword }}" >> $GITHUB_ENV
+        echo MAVEN_SNAPSHOT_SERVER_ID="${{ inputs.mavenSnapshotServerId }}" >> $GITHUB_ENV
+        echo MAVEN_SNAPSHOT_SERVER_USERNAME="${{ inputs.mavenSnapshotServerUsername }}" >> $GITHUB_ENV
+        echo MAVEN_SNAPSHOT_SERVER_PASSWORD="${{ inputs.mavenSnapshotServerPassword }}" >> $GITHUB_ENV
+        echo MAVEN_RELEASE_EXECUTE_PERFORM="${{ inputs.mavenReleaseExecutePerform }}" >> $GITHUB_ENV
+        echo MAVEN_RELEASE_PUSH_COMMITS="${{ inputs.mavenReleasePushCommits }}" >> $GITHUB_ENV
+        echo MAVEN_RELEASE_EXECUTE_POST_SCRIPTS="${{ inputs.mavenReleaseExecutePostScripts }}" >> $GITHUB_ENV
+        echo MAVEN_RELEASE_ARGUMENTS="${{ inputs.mavenReleaseArguments }}" >> $GITHUB_ENV
+        echo GIT_USER_NAME="${{ inputs.gitUserName }}" >> $GITHUB_ENV
+        echo GIT_USER_EMAIL="${{ inputs.gitUserEmail }}" >> $GITHUB_ENV
+    - name: "Set GIT automation credentials"
+      run: git config --global user.name "${{ inputs.gitUserName }}" && git config --global user.email "${{ inputs.gitUserEmail }}"
+      shell: bash
+    - name: "Check release prerequisites"
+      run: ${{ github.action_path }}/check.sh
+      shell: bash
+    - name: Export release version
+      id: version
+      run: ${{ github.action_path }}/version.sh
+      shell: bash
+    - name: "Prepare release"
+      id: prepare
+      run: ${{ github.action_path }}/prepare.sh ${{ inputs.mavenReleaseArguments }}
+      shell: bash
+    - name: "Perform release"
+      id: perform
+      run: ${{ github.action_path }}/perform.sh ${{ inputs.mavenReleaseArguments }}
+      shell: bash
+    - name: "Push commits and tags"
+      id: push
+      run: ${{ github.action_path }}/push.sh ${{ inputs.mavenReleaseArguments }}
+      shell: bash
+    - name: "Run post actions"
+      id: post
+      run: ${{ github.action_path }}/post.sh ${{ inputs.mavenReleaseArguments }}
+      shell: bash
