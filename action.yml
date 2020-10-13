@@ -25,8 +25,18 @@ inputs:
   mavenReleaseServerPassword:
     description: "Password required to access the release repository"
     required: true
+  mavenSnapshotServerId:
+    description: "Server id of the snapshot repository"
+    required: true
+  mavenSnapshotServerUsername:
+    description: "Username required to access the snapshot repository"
+    required: true
+  mavenSnapshotServerPassword:
+    description: "Password required to access the snapshot repository"
+    required: true
   mavenReleaseArguments:  # id of input
     description: 'Arguments for Maven release'
+    required: false
   mavenReleaseExecutePerform:
     description: 'Execute maven release:perform'
     required: false
@@ -54,6 +64,9 @@ runs:
     MAVEN_RELEASE_SERVER_ID: ${{ inputs.mavenReleaseServerId }}
     MAVEN_RELEASE_SERVER_USERNAME: ${{ inputs.mavenReleaseServerUsername }}
     MAVEN_RELEASE_SERVER_PASSWORD: ${{ inputs.mavenReleaseServerPassword }}
+    MAVEN_SNAPSHOT_SERVER_ID: ${{ inputs.mavenSnapshotServerId }}
+    MAVEN_SNAPSHOT_SERVER_USERNAME: ${{ inputs.mavenSnapshotServerUsername }}
+    MAVEN_SNAPSHOT_SERVER_PASSWORD: ${{ inputs.mavenSnapshotServerPassword }}
     MAVEN_RELEASE_ARGUMENTS: ${{ inputs.mavenReleaseArguments }}
     MAVEN_RELEASE_EXECUTE_PERFORM: ${{ inputs.mavenReleaseExecutePerform }}
     MAVEN_RELEASE_PUSH_COMMITS: ${{ inputs.mavenReleasePushCommits }}
