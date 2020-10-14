@@ -1,6 +1,14 @@
 name: "Maven Release Action"
 description: "Perform a Maven release"
 inputs:
+  mavenBinary:
+    description: "Maven binary location to invoke"
+    required: false
+    default: "${{ github.workspace }}/mvnw"
+  mavenProjectPom:
+    description: "Maven root project POM"
+    required: false
+    default: "${{ github.workspace }}/pom.xml"
   releaseBranchName:
     description: "Release branch"
     required: false
@@ -13,7 +21,7 @@ inputs:
   mavenReleaseSettingsXml:
     description: "Maven settings.xml to use for the release"
     required: false
-    default: "settings.xml"
+    default: "${{ github.workspace }}/settings.xml"
   mavenReleaseServerId:
     description: "Server id of the release repository"
     required: true
@@ -47,10 +55,18 @@ inputs:
     description: "After a successful release:perform execute post scripts"
     required: false
     default: "true"
+  mavenReleaseExecutePreScripts:
+    description: "Execute pre scripts before release:prepare"
+    required: false
+    default: "true"
   mavenPostScripts:
     description: "Post scripts location"
     required: false
-    default: ".mvn/release/post"
+    default: "${{ github.workspace }}/.mvn/release/post"
+  mavenPreScripts:
+    description: "Pre scripts location"
+    required: false
+    default: "${{ github.workspace }}/.mvn/release/pre"
   mavenReleaseTag:
     description: "Tag to create for released version"
     required: false
@@ -74,8 +90,11 @@ outputs:
   pushed:
     description: "Commits and tags were pushed"
     value: ${{ steps.push.outputs.executed }}
+  pre:
+    description: "Pre actions were executed"
+    value: ${{ steps.pre.outputs.executed }}
   post:
-    description: "Post actions were run"
+    description: "Post actions were executed"
     value: ${{ steps.post.outputs.executed }}
   version:
     description: "Released version"
@@ -87,32 +106,40 @@ runs:
     - name: Set environment variables
       shell: bash
       run: |
-        echo RELEASE_POST_SCRIPTS="${GITHUB_WORKSPACE}/${{ inputs.mavenPostScripts }}" >> $GITHUB_ENV
-        echo MAVEN_BIN="${GITHUB_WORKSPACE}/mvnw" >> $GITHUB_ENV
-        echo RELEASE_BRANCH_NAME="${{ inputs.releaseBranchName }}" >> $GITHUB_ENV
-        echo MAVEN_RELEASE_SETTINGS_XML="${{ inputs.mavenReleaseSettingsXml }}" >> $GITHUB_ENV
-        echo MAVEN_RELEASE_SERVER_ID="${{ inputs.mavenReleaseServerId }}" >> $GITHUB_ENV
-        echo MAVEN_RELEASE_SERVER_USERNAME="${{ inputs.mavenReleaseServerUsername }}" >> $GITHUB_ENV
-        echo MAVEN_RELEASE_SERVER_PASSWORD="${{ inputs.mavenReleaseServerPassword }}" >> $GITHUB_ENV
-        echo MAVEN_SNAPSHOT_SERVER_ID="${{ inputs.mavenSnapshotServerId }}" >> $GITHUB_ENV
-        echo MAVEN_SNAPSHOT_SERVER_USERNAME="${{ inputs.mavenSnapshotServerUsername }}" >> $GITHUB_ENV
-        echo MAVEN_SNAPSHOT_SERVER_PASSWORD="${{ inputs.mavenSnapshotServerPassword }}" >> $GITHUB_ENV
-        echo MAVEN_RELEASE_EXECUTE_PERFORM="${{ inputs.mavenReleaseExecutePerform }}" >> $GITHUB_ENV
-        echo MAVEN_RELEASE_PUSH_COMMITS="${{ inputs.mavenReleasePushCommits }}" >> $GITHUB_ENV
-        echo MAVEN_RELEASE_EXECUTE_POST_SCRIPTS="${{ inputs.mavenReleaseExecutePostScripts }}" >> $GITHUB_ENV
-        echo MAVEN_RELEASE_ARGUMENTS="${{ inputs.mavenReleaseArguments }}" >> $GITHUB_ENV
-        echo GIT_USER_NAME="${{ inputs.gitUserName }}" >> $GITHUB_ENV
-        echo GIT_USER_EMAIL="${{ inputs.gitUserEmail }}" >> $GITHUB_ENV
-        echo MAVEN_RELEASE_TAG="${{ inputs.mavenReleaseTag }}" >> $GITHUB_ENV
-        echo MAVEN_RELEASE_VERSION="${{ inputs.mavenReleaseVersion }}" >> $GITHUB_ENV
-        echo MAVEN_NEXT_DEVELOPMENT_VERSION="${{ inputs.mavenNextDevelopmentVersion }}" >> $GITHUB_ENV
+        cat <<EOF >> $GITHUB_ENV
+          RELEASE_POST_SCRIPTS="${{ inputs.mavenPostScripts }}"
+          RELEASE_PRE_SCRIPTS="${{ inputs.mavenPreScripts }}"
+          MAVEN_BIN="${{ inputs.mavenBinary }}"
+          MAVEN_PROJECT_POM="${{ inputs.mavenProjectPom }}"
+          RELEASE_BRANCH_NAME="${{ inputs.releaseBranchName }}"
+          MAVEN_RELEASE_SETTINGS_XML="${{ inputs.mavenReleaseSettingsXml }}"
+          MAVEN_RELEASE_SERVER_ID="${{ inputs.mavenReleaseServerId }}"
+          MAVEN_RELEASE_SERVER_USERNAME="${{ inputs.mavenReleaseServerUsername }}"
+          MAVEN_RELEASE_SERVER_PASSWORD="${{ inputs.mavenReleaseServerPassword }}"
+          MAVEN_SNAPSHOT_SERVER_ID="${{ inputs.mavenSnapshotServerId }}"
+          MAVEN_SNAPSHOT_SERVER_USERNAME="${{ inputs.mavenSnapshotServerUsername }}"
+          MAVEN_SNAPSHOT_SERVER_PASSWORD="${{ inputs.mavenSnapshotServerPassword }}"
+          MAVEN_RELEASE_EXECUTE_PERFORM="${{ inputs.mavenReleaseExecutePerform }}"
+          MAVEN_RELEASE_PUSH_COMMITS="${{ inputs.mavenReleasePushCommits }}"
+          MAVEN_RELEASE_EXECUTE_POST_SCRIPTS="${{ inputs.mavenReleaseExecutePostScripts }}"
+          MAVEN_RELEASE_EXECUTE_PRE_SCRIPTS="${{ inputs.mavenReleaseExecutePreScripts }}"
+          MAVEN_RELEASE_ARGUMENTS="${{ inputs.mavenReleaseArguments }}"
+          GIT_USER_NAME="${{ inputs.gitUserName }}"
+          GIT_USER_EMAIL="${{ inputs.gitUserEmail }}"
+          MAVEN_RELEASE_TAG="${{ inputs.mavenReleaseTag }}"
+          MAVEN_RELEASE_VERSION="${{ inputs.mavenReleaseVersion }}"
+          MAVEN_NEXT_DEVELOPMENT_VERSION="${{ inputs.mavenNextDevelopmentVersion }}"
+        EOF
     - name: "Set GIT automation credentials"
       run: git config --global user.name "${{ inputs.gitUserName }}" && git config --global user.email "${{ inputs.gitUserEmail }}"
       shell: bash
     - name: "Check release prerequisites"
       run: ${{ github.action_path }}/check.sh
       shell: bash
-    - name: Export release version
+    - name: "Run pre actions"
+      run: ${{ github.action_path }}/pre.sh ${{ inputs.mavenReleaseArguments }}
+      shell: bash
+    - name: "Export release version"
       id: version
       run: ${{ github.action_path }}/version.sh
       shell: bash
