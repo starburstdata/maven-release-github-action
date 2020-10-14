@@ -89,10 +89,7 @@ function mavenMetadataPath() {
 }
 
 function mavenProjectVersion() {
-
-  # $1 = mvnw location
-  # $2 = pom.xml
-  ${1} -f ${2} -q \
+  ${MAVEN_BIN} -f ${MAVEN_PROJECT_POM} -q \
     -Dexec.executable=echo \
     -Dexec.args='${project.version}' \
     --non-recursive \
