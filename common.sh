@@ -1,5 +1,22 @@
 #!/usr/bin/env bash
 
+if [[ -f "${GITHUB_WORKSPACE}/${MAVEN_RELEASE_SETTINGS_XML}" ]]
+then
+  # Use the provided Maven settings.xml
+  echo
+  echo "------------------------------------------------------------------------------"
+  echo "Using the provided Maven settings: ${MAVEN_RELEASE_SETTINGS_XML}"
+  echo "------------------------------------------------------------------------------"
+  export MAVEN_CONFIG="-s ${GITHUB_WORKSPACE}/${MAVEN_RELEASE_SETTINGS_XML}"
+else
+  # Use the template we provide that resides in the docker image
+  echo
+  echo "------------------------------------------------------------------------------"
+  echo "Using the built-in Maven settings template as ${MAVEN_RELEASE_SETTINGS_XML} does not exist in ${GITHUB_WORKSPACE}"
+  echo "------------------------------------------------------------------------------"
+  export MAVEN_CONFIG="-s ${GITHUB_ACTION_PATH}/settings.xml"
+fi
+
 function mavenCoordinateToArtifactPath() {
   # Standard format for a Maven coordinate:
   # <groupId>:<artifactId>[:<extension>[:classifier]]:<version>
@@ -53,29 +70,18 @@ function mavenMetadataPath() {
 }
 
 function mavenProjectVersion() {
-  # $1 = pom.xml
 
-  # Strip all the whitespace out of the pom.xml
-  pom=`cat "$1" | tr -d " \t\n\r"`
+  # $1 = mvnw location
+  # $2 = pom.xml
+  ${1} -f ${2} -q \
+    -Dexec.executable=echo \
+    -Dexec.args='${project.version}' \
+    --non-recursive \
+    exec:exec
+}
 
-  # If a parent element exists extract the specified version
-  parentVersion=""
-  if grep -q '<parent>' <<< "${pom}"
-  then
-    parentVersion=`echo "${pom}" | \
-      sed -n "s@\(.*\)\(<parent>.*</parent>\)\(.*\)@\2@p" | \
-      sed -n "s@\(.*<version>\)\(.*\)\(</version>\)\(.*\)@\2@p"`
-  fi
-
-  # Strip out all blocks that may contain a <version/> tag which will only
-  # leave the project version if it's present
-  version=`echo "${pom}" | \
-    sed -e 's@<profiles>.*</profiles>@@' | \
-    sed -e 's@<dependencies>.*</dependencies>@@' | \
-    sed -e 's@<build>.*</build>@@' | \
-    sed -e 's@<parent>.*</parent>@@' | \
-    sed -n "s@\(.*<version>\)\(.*\)\(.*</version>\)\(.*\)@\2@p"`
-
-  # If the project version is present use it, otherwise use the parent version
-  [ ! -z "${version}" ] && echo "${version}" || echo "${parentVersion}"
+function set_output() {
+  # $1 = key
+  # $2 = value
+  echo "::set-output name=${1}::${2}"
 }
