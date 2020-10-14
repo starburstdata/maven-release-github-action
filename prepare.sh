@@ -7,8 +7,8 @@ source ${GITHUB_ACTION_PATH}/common.sh
 # ------------------------------------------------------------------------------
 echo
 echo "------------------------------------------------------------------------------"
-echo "Executing release:prepare using -Darguments=\"${MAVEN_RELEASE_ARGUMENTS}\""
+echo "Executing release:prepare using -Darguments=\"${MAVEN_RELEASE_ARGUMENTS}\" ${RELEASE_ARGUMENTS}"
 echo "------------------------------------------------------------------------------"
-${MAVEN_BIN} -B release:prepare -Darguments="${MAVEN_RELEASE_ARGUMENTS}"
+${MAVEN_BIN} -B release:prepare -Darguments="${MAVEN_RELEASE_ARGUMENTS}" ${RELEASE_ARGUMENTS}
 echo "------------------------------------------------------------------------------"
 set_output "executed" "true"

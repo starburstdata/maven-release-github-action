@@ -17,6 +17,25 @@ else
   export MAVEN_CONFIG="-s ${GITHUB_ACTION_PATH}/settings.xml"
 fi
 
+RELEASE_ARGUMENTS=""
+
+if [[ ! -z "${MAVEN_RELEASE_TAG}" ]];
+then
+  RELEASE_ARGUMENTS="${RELEASE_ARGUMENTS} -Dtag=${MAVEN_RELEASE_TAG}"
+fi
+
+if [[ ! -z "${MAVEN_RELEASE_VERSION}" ]];
+then
+  RELEASE_ARGUMENTS="${RELEASE_ARGUMENTS} -DreleaseVersion=${MAVEN_RELEASE_VERSION}"
+fi
+
+if [[ ! -z "${MAVEN_NEXT_DEVELOPMENT_VERSION}" ]];
+then
+  RELEASE_ARGUMENTS="${RELEASE_ARGUMENTS} -DdevelopmentVersion=${MAVEN_NEXT_DEVELOPMENT_VERSION}"
+fi
+
+export RELEASE_ARGUMENTS="${RELEASE_ARGUMENTS}"
+
 function mavenCoordinateToArtifactPath() {
   # Standard format for a Maven coordinate:
   # <groupId>:<artifactId>[:<extension>[:classifier]]:<version>
