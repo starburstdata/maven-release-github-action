@@ -51,6 +51,18 @@ inputs:
     description: "Post scripts location"
     required: false
     default: ".mvn/release/post"
+  mavenReleaseTag:
+    description: "Tag to create for released version"
+    required: false
+    default: ""
+  mavenReleaseVersion:
+    description: "Release version"
+    required: false
+    default: ""
+  mavenNextDevelopmentVersion:
+    description: "Next development version"
+    required: false
+    default: ""
 
 outputs:
   prepared:
@@ -91,6 +103,9 @@ runs:
         echo MAVEN_RELEASE_ARGUMENTS="${{ inputs.mavenReleaseArguments }}" >> $GITHUB_ENV
         echo GIT_USER_NAME="${{ inputs.gitUserName }}" >> $GITHUB_ENV
         echo GIT_USER_EMAIL="${{ inputs.gitUserEmail }}" >> $GITHUB_ENV
+        echo MAVEN_RELEASE_TAG="${{ inputs.mavenReleaseTag }}" >> $GITHUB_ENV
+        echo MAVEN_RELEASE_VERSION="${{ inputs.mavenReleaseVersion }}" >> $GITHUB_ENV
+        echo MAVEN_NEXT_DEVELOPMENT_VERSION="${{ inputs.mavenNextDevelopmentVersion }}" >> $GITHUB_ENV
     - name: "Set GIT automation credentials"
       run: git config --global user.name "${{ inputs.gitUserName }}" && git config --global user.email "${{ inputs.gitUserEmail }}"
       shell: bash
