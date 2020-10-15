@@ -4,6 +4,10 @@ source ${GITHUB_ACTION_PATH}/common.sh
 
 version=$(mavenProjectVersion | sed 's/-SNAPSHOT//')
 
+if [[ "${MAVEN_RELEASE_VERSION}" != "" ]]; then
+  version="${MAVEN_RELEASE_VERSION}"
+else
+
 set_output "version" "${version}"
 echo "MAVEN_PROJECT_VERSION=${version}" >> $GITHUB_ENV
 
