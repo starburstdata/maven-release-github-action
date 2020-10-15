@@ -22,15 +22,3 @@ then
   echo "Skipping release: the latest commit ${GITHUB_SHA} is release commit from ${GIT_USER_NAME}. There are no new commits to release."
   exit 1
 fi
-
-# ------------------------------------------------------------------------------
-# We don't want to attempt a release if we are on the wrong branch.
-# ------------------------------------------------------------------------------
-branch=${GITHUB_REF##*/}
-echo "Current branch: ${branch}"
-
-if [[ -n "${RELEASE_BRANCH_NAME}" && ! "${branch}" = "${RELEASE_BRANCH_NAME}" ]]
-then
-  echo "!!! Skipping release: we are on ${branch} and should be on ${RELEASE_BRANCH_NAME}."
-  exit 1
-fi
