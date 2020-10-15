@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 
-if [[ -f "${GITHUB_WORKSPACE}/${MAVEN_RELEASE_SETTINGS_XML}" ]]
+if [[ -f "${MAVEN_RELEASE_SETTINGS_XML}" ]]
 then
   # Use the provided Maven settings.xml
   echo
   echo "------------------------------------------------------------------------------"
   echo "Using the provided Maven settings: ${MAVEN_RELEASE_SETTINGS_XML}"
   echo "------------------------------------------------------------------------------"
-  export MAVEN_CONFIG="-s ${GITHUB_WORKSPACE}/${MAVEN_RELEASE_SETTINGS_XML}"
+  export MAVEN_CONFIG="-s ${MAVEN_RELEASE_SETTINGS_XML}"
 else
   # Use the template we provide that resides in the docker image
   echo
   echo "------------------------------------------------------------------------------"
-  echo "Using the built-in Maven settings template as ${MAVEN_RELEASE_SETTINGS_XML} does not exist in ${GITHUB_WORKSPACE}"
+  echo "Using the built-in Maven settings template as ${MAVEN_RELEASE_SETTINGS_XML} does not exist"
   echo "------------------------------------------------------------------------------"
   export MAVEN_CONFIG="-s ${GITHUB_ACTION_PATH}/settings.xml"
 fi
@@ -89,10 +89,7 @@ function mavenMetadataPath() {
 }
 
 function mavenProjectVersion() {
-
-  # $1 = mvnw location
-  # $2 = pom.xml
-  ${1} -f ${2} -q \
+  ${MAVEN_BIN} -f ${MAVEN_PROJECT_POM} -q \
     -Dexec.executable=echo \
     -Dexec.args='${project.version}' \
     --non-recursive \
