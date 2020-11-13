@@ -162,13 +162,13 @@ runs:
       run: ${{ github.action_path }}/perform.sh ${{ inputs.mavenReleaseArguments }}
       shell: bash
       working-directory: "${{ inputs.workingDirectory }}"
-    - name: "Push commits and tags"
-      id: push
-      run: ${{ github.action_path }}/push.sh ${{ inputs.mavenReleaseArguments }}
-      shell: bash
-      working-directory: "${{ inputs.workingDirectory }}"
     - name: "Run post actions"
       id: post
       run: ${{ github.action_path }}/post.sh ${{ inputs.mavenReleaseArguments }}
+      shell: bash
+      working-directory: "${{ inputs.workingDirectory }}"
+    - name: "Push commits and tags"
+      id: push
+      run: ${{ github.action_path }}/push.sh ${{ inputs.mavenReleaseArguments }}
       shell: bash
       working-directory: "${{ inputs.workingDirectory }}"
