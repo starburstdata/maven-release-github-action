@@ -83,6 +83,10 @@ inputs:
     description: "Next development version"
     required: false
     default: ""
+  traceEnabled:
+    description: "Enable tracing executing of scripts"
+    required: false
+    default: "false"
 
 outputs:
   prepared:
@@ -134,6 +138,7 @@ runs:
         MAVEN_RELEASE_TAG=${{ inputs.mavenReleaseTag }}
         MAVEN_RELEASE_VERSION=${{ inputs.mavenReleaseVersion }}
         MAVEN_NEXT_DEVELOPMENT_VERSION=${{ inputs.mavenNextDevelopmentVersion }}
+        TRACE_ENABLED=${{ inputs.traceEnabled }}
         EOF
     - name: "Set GIT automation credentials"
       run: git config --global user.name "${{ inputs.gitUserName }}" && git config --global user.email "${{ inputs.gitUserEmail }}"

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+[[ $TRACE_ENABLED == "true" ]] && set -x
+
 if [[ -f "${MAVEN_RELEASE_SETTINGS_XML}" ]]
 then
   # Use the provided Maven settings.xml
