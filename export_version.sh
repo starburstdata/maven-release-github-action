@@ -2,10 +2,10 @@
 set -euo pipefail
 source ${GITHUB_ACTION_PATH}/common.sh
 
-version=$(mavenProjectVersion | sed 's/-SNAPSHOT//')
-
 if [[ "${MAVEN_RELEASE_VERSION}" != "" ]]; then
   version="${MAVEN_RELEASE_VERSION}"
+else
+  version=$(mavenProjectVersion | sed 's/-SNAPSHOT//')
 fi
 
 set_output "version" "${version}"
