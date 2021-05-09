@@ -11,9 +11,8 @@ then
   # Make the release Maven project version available to any scripts
   echo "Running release pre actions for version ${MAVEN_PROJECT_VERSION}"
   echo "------------------------------------------------------------------------------"
-  for preReleaseScript in `ls ${RELEASE_PRE_SCRIPTS}`
+  for script in "${RELEASE_PRE_SCRIPTS}"/*
   do
-    script="${RELEASE_PRE_SCRIPTS}/${preReleaseScript}"
     if [[ -x "${script}" ]]
     then
       echo "Running pre action ${script}"

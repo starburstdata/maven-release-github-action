@@ -11,9 +11,8 @@ then
   # Make the release Maven project version available to any scripts
   echo "Running release post actions for version ${MAVEN_PROJECT_VERSION}"
   echo "------------------------------------------------------------------------------"
-  for postReleaseScript in `ls ${RELEASE_POST_SCRIPTS}`
+  for script in "${RELEASE_POST_SCRIPTS}"/*
   do
-    script="${RELEASE_POST_SCRIPTS}/${postReleaseScript}"
     if [[ -x "${script}" ]]
     then
       echo "Running post action ${script}"
