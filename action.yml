@@ -47,6 +47,9 @@ inputs:
   mavenReleaseArguments:  # id of input
     description: 'Arguments for Maven release'
     required: false
+  releasePluginArguments:
+    description: 'Arguments for Maven Release Plugin'
+    required: false
   mavenReleaseExecutePerform:
     description: 'Execute maven release:perform'
     required: false
@@ -133,6 +136,7 @@ runs:
         MAVEN_RELEASE_EXECUTE_POST_SCRIPTS=${{ inputs.mavenReleaseExecutePostScripts }}
         MAVEN_RELEASE_EXECUTE_PRE_SCRIPTS=${{ inputs.mavenReleaseExecutePreScripts }}
         MAVEN_RELEASE_ARGUMENTS=${{ inputs.mavenReleaseArguments }}
+        RELEASE_ARGUMENTS=${{ inputs.releasePluginArguments }}
         GIT_USER_NAME=${{ inputs.gitUserName }}
         GIT_USER_EMAIL=${{ inputs.gitUserEmail }}
         MAVEN_RELEASE_TAG=${{ inputs.mavenReleaseTag }}

@@ -19,7 +19,7 @@ else
   export MAVEN_CONFIG="-s ${GITHUB_ACTION_PATH}/settings.xml"
 fi
 
-RELEASE_ARGUMENTS=""
+RELEASE_ARGUMENTS="${RELEASE_ARGUMENTS:-}"
 
 if [[ ! -z "${MAVEN_RELEASE_TAG}" ]];
 then
