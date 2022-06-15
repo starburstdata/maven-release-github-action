@@ -161,23 +161,23 @@ runs:
       run: ${{ github.action_path }}/pre.sh ${{ inputs.mavenReleaseArguments }}
       shell: bash
       working-directory: "${{ inputs.workingDirectory }}"
-    - name: "Prepare release"
-      id: prepare
-      run: ${{ github.action_path }}/prepare.sh ${{ inputs.mavenReleaseArguments }}
-      shell: bash
-      working-directory: "${{ inputs.workingDirectory }}"
-    - name: "Perform release"
-      id: perform
-      run: ${{ github.action_path }}/perform.sh ${{ inputs.mavenReleaseArguments }}
-      shell: bash
-      working-directory: "${{ inputs.workingDirectory }}"
+#    - name: "Prepare release"
+#      id: prepare
+#      run: ${{ github.action_path }}/prepare.sh ${{ inputs.mavenReleaseArguments }}
+#      shell: bash
+#      working-directory: "${{ inputs.workingDirectory }}"
+#    - name: "Perform release"
+#      id: perform
+#      run: ${{ github.action_path }}/perform.sh ${{ inputs.mavenReleaseArguments }}
+#      shell: bash
+#      working-directory: "${{ inputs.workingDirectory }}"
     - name: "Run post actions"
       id: post
       run: ${{ github.action_path }}/post.sh ${{ inputs.mavenReleaseArguments }}
       shell: bash
       working-directory: "${{ inputs.workingDirectory }}"
-    - name: "Push commits and tags"
-      id: push
-      run: ${{ github.action_path }}/push.sh ${{ inputs.mavenReleaseArguments }}
-      shell: bash
-      working-directory: "${{ inputs.workingDirectory }}"
+#    - name: "Push commits and tags"
+#      id: push
+#      run: ${{ github.action_path }}/push.sh ${{ inputs.mavenReleaseArguments }}
+#      shell: bash
+#      working-directory: "${{ inputs.workingDirectory }}"
