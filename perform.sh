@@ -14,7 +14,7 @@ then
   echo
   echo "Executing release:perform using -Darguments=\"${MAVEN_RELEASE_ARGUMENTS}\""
   echo "------------------------------------------------------------------------------"
-  ${MAVEN_BIN} -B release:perform -Darguments="${MAVEN_RELEASE_ARGUMENTS}"
+  ${MAVEN_BIN} -B release:perform -Darguments="-P docker,manifest,licenses -Ddocker.tag.suffix=-x64"
   set_output "executed" "true"
 else
   echo "Skipped release:perform"
