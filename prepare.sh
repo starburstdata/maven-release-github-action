@@ -8,10 +8,16 @@ source ${GITHUB_ACTION_PATH}/common.sh
 # ------------------------------------------------------------------------------
 # Running release:prepare
 # ------------------------------------------------------------------------------
-echo
-echo "------------------------------------------------------------------------------"
-echo "Executing release:prepare using -Darguments=\"${MAVEN_RELEASE_ARGUMENTS}\" ${RELEASE_ARGUMENTS}"
-echo "------------------------------------------------------------------------------"
-${MAVEN_BIN} -B release:prepare -Darguments="${MAVEN_RELEASE_ARGUMENTS}" ${RELEASE_ARGUMENTS}
-echo "------------------------------------------------------------------------------"
-set_output "executed" "true"
+
+if [[ ( ${SKIP_PREPARE} == "false") ]]
+then
+  echo
+  echo "------------------------------------------------------------------------------"
+  echo "Executing release:prepare using -Darguments=\"${MAVEN_RELEASE_ARGUMENTS}\" ${RELEASE_ARGUMENTS}"
+  echo "------------------------------------------------------------------------------"
+  ${MAVEN_BIN} -B release:prepare -Darguments="${MAVEN_RELEASE_ARGUMENTS}" ${RELEASE_ARGUMENTS}
+  echo "------------------------------------------------------------------------------"
+  set_output "executed" "true"
+else
+  # TODO -> umieścić tutaj kod Pawła
+fi

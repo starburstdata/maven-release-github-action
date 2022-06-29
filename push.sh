@@ -15,21 +15,24 @@ function fail_with_msg() {
 # ------------------------------------------------------------------------------
 # Push the release commits and tags
 # ------------------------------------------------------------------------------
-echo "------------------------------------------------------------------------------"
-if [[ "${MAVEN_RELEASE_PUSH_COMMITS}" == "true" ]]
+if [[ ( ${SKIP_PREPARE} == "false") ]]
 then
-  echo
-  echo "Pushing release commits and tag"
   echo "------------------------------------------------------------------------------"
-  if [[ -n ${RELEASE_BRANCH_NAME} ]]; then
-    git push origin HEAD:refs/heads/${RELEASE_BRANCH_NAME} || fail_with_msg "Failed to push release commit"
+  if [[ "${MAVEN_RELEASE_PUSH_COMMITS}" == "true" ]]
+  then
+    echo
+    echo "Pushing release commits and tag"
+    echo "------------------------------------------------------------------------------"
+    if [[ -n ${RELEASE_BRANCH_NAME} ]]; then
+      git push origin HEAD:refs/heads/${RELEASE_BRANCH_NAME} || fail_with_msg "Failed to push release commit"
+    fi
+    git push origin ${MAVEN_PROJECT_VERSION} || fail_with_msg "Failed to push release tag"
+    set_output "executed" "true"
+  else
+    echo "Skipped pushing release commits and tag"
+    [[ -n ${RELEASE_BRANCH_NAME} ]] && echo "Branch to be pushed: origin HEAD:refs/heads/${RELEASE_BRANCH_NAME}"
+    echo "Tag to be pushed: ${MAVEN_PROJECT_VERSION}"
+    set_output "executed" "false"
   fi
-  git push origin ${MAVEN_PROJECT_VERSION} || fail_with_msg "Failed to push release tag"
-  set_output "executed" "true"
-else
-  echo "Skipped pushing release commits and tag"
-  [[ -n ${RELEASE_BRANCH_NAME} ]] && echo "Branch to be pushed: origin HEAD:refs/heads/${RELEASE_BRANCH_NAME}"
-  echo "Tag to be pushed: ${MAVEN_PROJECT_VERSION}"
-  set_output "executed" "false"
+  echo "------------------------------------------------------------------------------"
 fi
-echo "------------------------------------------------------------------------------"
