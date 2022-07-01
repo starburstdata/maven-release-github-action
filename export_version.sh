@@ -5,7 +5,8 @@ set -euo pipefail
 
 source ${GITHUB_ACTION_PATH}/common.sh
 
-if [[ "${MAVEN_RELEASE_VERSION}" != "" ]]; then
+if [[ "${MAVEN_RELEASE_VERSION}" != "" ]]; then # TODO -> Użyć tej zmiennej w kodzie
+# TODO -> Sprawdzić kiedy ta zmienna będzie jeszcze wykorzystywana
   version="${MAVEN_RELEASE_VERSION}"
 else
   version=$(mavenProjectVersion | sed 's/-SNAPSHOT//')

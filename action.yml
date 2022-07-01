@@ -86,6 +86,14 @@ inputs:
     description: "Next development version"
     required: false
     default: ""
+  skipPrepare: # TODO -> zamienić nazwę na lepszą
+    description: "Publish artifacts from selected system version"
+    required: false
+    default: "false"
+  publishArtifactsFromTag: # TODO -> pozmieniać te nazwy
+    description: "Publish artifacts from selected system version"
+    required: false
+    default: "false"
   traceEnabled:
     description: "Enable tracing executing of scripts"
     required: false
@@ -119,6 +127,8 @@ runs:
       working-directory: "${{ inputs.workingDirectory }}"
       run: |
         cat <<EOF >> $GITHUB_ENV
+        SKIP_PREPARE=${{inputs.skipPrepare}}
+        PUBLISH_ARTIFACTS_FROM_TAG=${{inputs.publishArtifactsFromTag}}
         RELEASE_POST_SCRIPTS=${{ inputs.mavenPostScripts }}
         RELEASE_PRE_SCRIPTS=${{ inputs.mavenPreScripts }}
         MAVEN_BIN=${{ inputs.mavenBinary }}
