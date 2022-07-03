@@ -97,7 +97,7 @@ inputs:
   traceEnabled:
     description: "Enable tracing executing of scripts"
     required: false
-    default: "false"
+    default: "true"
 
 outputs:
   prepared:
