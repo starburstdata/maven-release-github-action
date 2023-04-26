@@ -91,11 +91,10 @@ function mavenMetadataPath() {
 }
 
 function mavenProjectVersion() {
-  ${MAVEN_BIN} -f ${MAVEN_PROJECT_POM} -q \
-    -Dexec.executable=echo \
-    -Dexec.args='${project.version}' \
-    --non-recursive \
-    exec:exec
+  ${MAVEN_BIN} -f "${MAVEN_PROJECT_POM}" -q \
+      help:evaluate \
+      -Dexpression=project.version \
+      -DforceStdout
 }
 
 function set_output() {
