@@ -100,5 +100,10 @@ function mavenProjectVersion() {
 function set_output() {
   # $1 = key
   # $2 = value
-  echo "::set-output name=${1}::${2}"
+  delimiter="$(openssl rand -hex 8)"
+    {
+      echo "${1}<<${delimiter}"
+      echo "$2"
+      echo "${delimiter}"
+    } >> "$GITHUB_OUTPUT"
 }
