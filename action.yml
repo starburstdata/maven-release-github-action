@@ -148,6 +148,10 @@ runs:
       run: git config --global user.name "${{ inputs.gitUserName }}" && git config --global user.email "${{ inputs.gitUserEmail }}"
       shell: bash
       working-directory: "${{ inputs.workingDirectory }}"
+    - name: "Prepare maven wrapper"
+      run: ${{ github.action_path }}/prepare_maven_wrapper.sh
+      shell: bash
+      working-directory: "${{ inputs.workingDirectory }}"
     - name: "Export release version"
       id: version
       run: ${{ github.action_path }}/export_version.sh
